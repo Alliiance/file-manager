@@ -19,8 +19,9 @@ namespace file_manager
             this.x = x;
             this.y = y;
         }
+        public List<int> ColumnsWidth { get; set; }
 
-        public List<object> Items { get; set; }
+        public List<ListViewItem> Items { get; set; }
 
         public void Clean()
         {
