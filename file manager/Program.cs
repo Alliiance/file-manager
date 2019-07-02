@@ -16,7 +16,7 @@ namespace file_manager
             var view = new ListView(10, 2);
 
 
-            view.ColumnsWidth = new List<int> { Console.WindowWidth - 20, 10, 10 };
+            view.ColumnsWidth = new List<int> { Console.WindowWidth - 20,  -  10, 10 };
             view.Items = new DirectoryInfo("C:\\").GetFileSystemInfos().Select(f =>
             new ListViewItem(f,
             f.Name,

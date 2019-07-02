@@ -55,7 +55,8 @@ namespace file_manager
                 }
                 Console.CursorLeft = x;
                 Console.CursorTop = i + y;
-                Console.Write(item);
+                item.Render(ColumnsWidth , i , x , y);
+                Console.Write(item); //
 
                 Console.ForegroundColor = savedForeground;
                 Console.BackgroundColor = savedBackground;
