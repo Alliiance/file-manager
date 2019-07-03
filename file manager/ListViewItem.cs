@@ -25,8 +25,24 @@ namespace file_manager
             {
                 Console.CursorTop = elementIndex + listViewY;
                 Console.CursorLeft = listViewX + columnsWidth.Take(i).Sum();
-                Console.Write(columns[i].PadRight(columnsWidth[i], ' '));
+                Console.Write(GetStringWithLenght(columns[i], columnsWidth[i]));
             }
         }
+
+        internal void Clean(List<int> columnsWidth, int i , int x , int y)
+        {
+            Console.CursorTop = i + y;
+            Console.CursorLeft = x;
+            Console.Write(new string(' ', columnsWidth.Sum()));
+        }
+
+        private string GetStringWithLenght(string v1, int maxLenght)
+        {
+            if (v1.Length < maxLenght)
+                return v1.PadRight(maxLenght, ' ');
+            else
+                return v1.Substring(0, maxLenght - 5) + "[ ]";
+        }
+
     }
 }

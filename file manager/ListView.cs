@@ -12,12 +12,14 @@ namespace file_manager
         private int selectedIndex;
         private bool wasPainted;
 
-        private int x, y;
+        private int scroll;
+        private int x, y, height;
 
-        public ListView(int x , int y)
+        public ListView(int x , int y, int height)
         {
             this.x = x;
             this.y = y;
+            this.height = height;
         }
         public List<int> ColumnsWidth { get; set; }
 
@@ -25,28 +27,30 @@ namespace file_manager
 
         public void Clean()
         {
+            selectedIndex = prevSelectedIndex = 0;
             wasPainted = false;
             for (int i = 0; i < Items.Count(); i++)
             {
                 Console.CursorLeft = x;
                 Console.CursorTop = i + y;
-                Console.Write(new string(' ', Items[i].ToString().Length));
+                Items[i].Clean(ColumnsWidth, i, x, y);
             }
         }
 
-        public object SelectedItem { get; set;}
+        public ListViewItem SelectedItem => Items[selectedIndex];
         public bool Focused { get; set; }
 
         public void Render()
         {
-            for (int i = 0;i < Items.Count; i++){
+            for (int i = 0;i < Math.Min(height,Items.Count); i++){
+                int elementIndex = i + scroll;
 
                 if (wasPainted) { 
-                    if (i != selectedIndex && i != prevSelectedIndex)
+                    if (elementIndex != selectedIndex && elementIndex != prevSelectedIndex)
                         continue;
                 }
 
-                var item = Items[i];
+                var item = Items[elementIndex];
                 var savedForeground = Console.ForegroundColor;
                 var savedBackground = Console.BackgroundColor;
                 if (i == selectedIndex){
@@ -56,7 +60,6 @@ namespace file_manager
                 Console.CursorLeft = x;
                 Console.CursorTop = i + y;
                 item.Render(ColumnsWidth , i , x , y);
-                Console.Write(item); //
 
                 Console.ForegroundColor = savedForeground;
                 Console.BackgroundColor = savedBackground;
@@ -64,15 +67,29 @@ namespace file_manager
             wasPainted = true;
         }
 
-        internal void Update(ConsoleKeyInfo key)
+        public void Update(ConsoleKeyInfo key)
         {
-
             prevSelectedIndex = selectedIndex;
 
-            if (key.Key == ConsoleKey.DownArrow && selectedIndex + 1 < Items.Count())
+            if (key.Key == ConsoleKey.DownArrow && selectedIndex + 1 < Items.Count)
                 selectedIndex++;
-            else if (key.Key == ConsoleKey.UpArrow && selectedIndex - 1 != 0)
+            else if (key.Key == ConsoleKey.UpArrow && selectedIndex - 1 >= 0)
                 selectedIndex--;
+
+            if (selectedIndex >= height + scroll)
+            {
+                scroll++;
+                wasPainted = false;
+            }
+            else if (selectedIndex < scroll)
+            {
+                scroll--;
+                wasPainted = false;
+            }
+            else if (key.Key == ConsoleKey.Enter)
+                Selected(this, EventArgs.Empty);
         }
+
+        public event EventHandler Selected;
     }
 }
