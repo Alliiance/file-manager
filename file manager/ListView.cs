@@ -40,6 +40,7 @@ namespace file_manager
 
         public ListViewItem SelectedItem => Items[selectedIndex];
         public bool Focused { get; set; }
+        public object CurrentState { get; internal set; }
 
         public void Render()
         {

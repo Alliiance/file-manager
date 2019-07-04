@@ -69,20 +69,17 @@ namespace file_manager
             {
                 view.Clean();
                 view.Items = GetItems(dir.FullName);
+                view.CurrentState = dir.FullName;
             }
         }
 
         private static void View_MoveBack(object sender, EventArgs e)
         {
             var view = (ListView)sender;
-            var info = view.SelectedItem.State;
-            if (info is FileInfo file)
-                Process.Start(file.FullName);
-            else if (info is DirectoryInfo dir)
-            {
-                view.Clean();
-                view.Items = GetItems(dir.FullName);
-            }
+            view.Clean();
+            string path = Path.GetDirectoryName(view.CurrentState.ToString());
+            view.Items = GetItems(path);
+            view.CurrentState = dir.FullName;
         }
     }
 }
