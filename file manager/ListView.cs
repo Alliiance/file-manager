@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,7 +56,7 @@ namespace file_manager
                 var savedBackground = Console.BackgroundColor;
                 if (i == selectedIndex){
                     Console.ForegroundColor = ConsoleColor.Black;
-                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.BackgroundColor = ConsoleColor.Green;
                 }
                 Console.CursorLeft = x;
                 Console.CursorTop = i + y;
@@ -75,6 +76,8 @@ namespace file_manager
                 selectedIndex++;
             else if (key.Key == ConsoleKey.UpArrow && selectedIndex - 1 >= 0)
                 selectedIndex--;
+            else if(key.Key == ConsoleKey.Backspace)
+                MoveBack(this, EventArgs.Empty);
 
             if (selectedIndex >= height + scroll)
             {
@@ -89,7 +92,7 @@ namespace file_manager
             else if (key.Key == ConsoleKey.Enter)
                 Selected(this, EventArgs.Empty);
         }
-
+        public event EventHandler MoveBack;
         public event EventHandler Selected;
     }
 }

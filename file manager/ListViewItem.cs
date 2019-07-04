@@ -8,7 +8,6 @@ namespace file_manager
 {
     class ListViewItem
     {
-
         private readonly string[] columns;
 
         public object State { get;  }
@@ -43,6 +42,5 @@ namespace file_manager
             else
                 return v1.Substring(0, maxLenght - 5) + "[ ]";
         }
-
     }
 }
