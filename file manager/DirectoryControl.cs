@@ -11,7 +11,10 @@ namespace file_manager
     class DirectoryControl
     {
         private readonly ListView[] view;
+        string[] buttons = new string[] { "Button 1", "Button 2", "Button 3" , "Very Long button" };
         private int disc;
+        private int countLуtter ;
+
 
         public DirectoryControl()
         {
@@ -42,9 +45,15 @@ namespace file_manager
             }
 
             for (int i = 0; i < view.Length; i++)
-            {
                 view[i].Render();
+
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                int letter = buttons[i].Length;
+                DrawButtons(countLуtter + 1, 22, buttons[i]);
+                countLуtter += letter + 1;
             }
+              
 
             while (true)
             {
@@ -93,6 +102,16 @@ namespace file_manager
             var info = view.SelectedItem.State;
             view.Items = GetItems(path);
             view.CurrentState = path;
+        }
+
+        private static void DrawButtons(int x , int y, string text)
+        {
+            Console.SetCursorPosition(x, y);
+            var savedBackgroundColor = Console.BackgroundColor;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.DarkCyan;
+            Console.Write(text);
+            Console.BackgroundColor = savedBackgroundColor;
         }
     }
 }

@@ -59,6 +59,11 @@ namespace file_manager
                     Console.ForegroundColor = ConsoleColor.Black;
                     Console.BackgroundColor = ConsoleColor.Green;
                 }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.BackgroundColor = ConsoleColor.Black;
+                }
                 Console.CursorLeft = x;
                 Console.CursorTop = i + y;
                 item.Render(ColumnsWidth , i , x , y);
