@@ -20,13 +20,13 @@ namespace file_manager
 
         private static List<ListViewItem> GetItems(string path)
         {
-            return new DirectoryInfo(path).GetFileSystemInfos()
-                .Select(f => new ListViewItem(
-                    f,
-                    f.Name,
-                    f is DirectoryInfo dir ? "<dir>" : f.Extension,
-                    f is FileInfo file ? file.Length.ToString() : ""
-                  )).ToList();
+             return new DirectoryInfo(path).GetFileSystemInfos()
+                 .Select(f => new ListViewItem(
+                     f,
+                     f.Name,
+                     f is DirectoryInfo dir ? "<dir>" : f.Extension,
+                     f is FileInfo file ? file.Length.ToString() : ""
+                   )).ToList();
         }
 
         internal void Start()
@@ -36,6 +36,7 @@ namespace file_manager
                 view[i] = new ListView(1 + Console.WindowWidth / view.Length * i, 1, height: 20);
                 view[i].ColumnsWidth = new List<int> { 35, 7, 10 };
                 view[i].Items = GetItems("C:\\");
+                view[i].CurrentState = "C:\\";
                 view[i].Selected += View_Selected;
                 view[i].MoveBack += View_MoveBack;
             }
@@ -49,7 +50,7 @@ namespace file_manager
             {
                 var key = Console.ReadKey();
 
-                if (key.Key == ConsoleKey.RightArrow)
+                if (key.Key == ConsoleKey.RightArrow && disc < view.Length - 1)
                     disc++;
                 else if (key.Key == ConsoleKey.LeftArrow && disc != 0)
                     disc--;
@@ -67,19 +68,31 @@ namespace file_manager
                 Process.Start(file.FullName);
             else if (info is DirectoryInfo dir)
             {
-                view.Clean();
-                view.Items = GetItems(dir.FullName);
-                view.CurrentState = dir.FullName;
+                try
+                {
+                    var items = GetItems(dir.FullName);
+                    view.Clean();
+                    view.Items = items;
+ 
+                    view.CurrentState = dir.FullName;
+                }
+                catch (Exception)
+                {
+
+                }
             }
         }
 
         private static void View_MoveBack(object sender, EventArgs e)
         {
             var view = (ListView)sender;
-            view.Clean();
             string path = Path.GetDirectoryName(view.CurrentState.ToString());
+            if (path == null)
+                return;
+            view.Clean();
+            var info = view.SelectedItem.State;
             view.Items = GetItems(path);
-            view.CurrentState = dir.FullName;
+            view.CurrentState = path;
         }
     }
 }
