@@ -11,10 +11,10 @@ namespace file_manager
     class DirectoryControl
     {
         private readonly ListView[] view;
-        string[] buttons = new string[] { "Button 1", "Button 2", "Button 3" , "Very Long button" };
+        string[] buttons = new string[] { "F1 - copy", "F2 - cut", "F3 - paste" , "F4 - root", "F5 - list of disks", "F6 - properties" , "F7 - rename" , "F8 - find" , "F9 - new folder" };
         private int disc;
         private int countLуtter ;
-
+        
 
         public DirectoryControl()
         {
@@ -42,7 +42,11 @@ namespace file_manager
                 view[i].CurrentState = "C:\\";
                 view[i].Selected += View_Selected;
                 view[i].MoveBack += View_MoveBack;
+                view[i].NewFolder += View_NewFolder;
+                view[i].RootDisc += View_ListOfDiscs;
             }
+
+
 
             for (int i = 0; i < view.Length; i++)
                 view[i].Render();
@@ -67,6 +71,20 @@ namespace file_manager
                     view[disc].Update(key);
                     view[disc].Render();
             }
+        }
+
+        private void View_NewFolder(object sender, EventArgs e)
+        {
+            UserText userText = new UserText();
+            string text = userText.CreateText("Create new folter: ");
+            string path = view[disc].CurrentState + "/" + text;
+            DirectoryInfo dirInfo = new DirectoryInfo(path);
+            if (!dirInfo.Exists)
+                dirInfo.Create();
+
+            view[disc].Clean();
+            view[disc].Items = GetItems(view[disc].CurrentState.ToString());
+
         }
 
         private static void View_Selected(object sender, EventArgs e)
@@ -99,10 +117,30 @@ namespace file_manager
             if (path == null)
                 return;
             view.Clean();
-            var info = view.SelectedItem.State;
+
             view.Items = GetItems(path);
             view.CurrentState = path;
         }
+
+        private static void View_ListOfDiscs(object sender, EventArgs e)
+        {
+            var listView = (ListView)sender;
+            listView.Clean();
+            listView.Items = GetDrives();
+        }
+
+        private static List<ListViewItem> GetDrives()
+        {
+            string[] drives = Directory.GetLogicalDrives();
+            List<ListViewItem> result = new List<ListViewItem>();
+
+            foreach (var drive in drives)
+            {
+                result.Add(new ListViewItem(new DirectoryInfo(drive), drive, "<drive>", ""));
+            }
+            return result;
+        }
+
 
         private static void DrawButtons(int x , int y, string text)
         {

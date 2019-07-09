@@ -24,7 +24,8 @@ namespace file_manager
         }
         public List<int> ColumnsWidth { get; set; }
 
-        public List<ListViewItem> Items { get; set; }
+        public List<ListViewItem> newItems { get; set; }
+        public List<ListViewItem> Items { get { return newItems; } set { scroll = 0; newItems = value; } }
 
         public void Clean()
         {
@@ -85,6 +86,12 @@ namespace file_manager
             else if(key.Key == ConsoleKey.Backspace)
                 MoveBack(this, EventArgs.Empty);
 
+            if (key.Key == ConsoleKey.F9)
+                NewFolder(this, EventArgs.Empty);
+
+            if (key.Key == ConsoleKey.F5)
+                RootDisc(this, EventArgs.Empty);
+
             if (selectedIndex >= height + scroll)
             {
                 scroll++;
@@ -100,5 +107,7 @@ namespace file_manager
         }
         public event EventHandler MoveBack;
         public event EventHandler Selected;
+        public event EventHandler NewFolder;
+        public event EventHandler RootDisc;
     }
 }
