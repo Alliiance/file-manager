@@ -12,7 +12,8 @@ namespace file_manager
     {
         static void Main(string[] args)
         {
-            Console.CursorVisible = false;  
+            Console.CursorVisible = false;
+            Console.WindowHeight = 38;
             DirectoryControl directoryControl = new DirectoryControl();
             directoryControl.Start();
         }

@@ -92,8 +92,18 @@ namespace file_manager
             if (key.Key == ConsoleKey.F3)
                 PasteFile(this, EventArgs.Empty);
 
+            if (key.Key == ConsoleKey.F4)
+                Root(this, EventArgs.Empty);
+
             if (key.Key == ConsoleKey.F5)
                 RootDisc(this, EventArgs.Empty);
+
+            if (key.Key == ConsoleKey.F7)
+                Rename(this, EventArgs.Empty);
+
+
+            if (key.Key == ConsoleKey.F8)
+                FindFile(this, EventArgs.Empty);
 
             if (key.Key == ConsoleKey.F9)
                 NewFolder(this, EventArgs.Empty);
@@ -115,7 +125,10 @@ namespace file_manager
         public event EventHandler Selected;
         public event EventHandler CopyFile;
         public event EventHandler PasteFile;
+        public event EventHandler Root;
+        public event EventHandler Rename;
+        public event EventHandler FindFile;
         public event EventHandler NewFolder;
-        public event EventHandler RootDisc;
+        public event EventHandler RootDisc; 
     }
 }

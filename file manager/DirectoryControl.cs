@@ -15,7 +15,7 @@ namespace file_manager
         private int disc;
         private int countLуtter;
         public string copiedFilePath;
-
+        UserText userText = new UserText();
         public DirectoryControl()
         {
             view = new ListView[2];
@@ -43,12 +43,13 @@ namespace file_manager
                 view[i].Selected += View_Selected;
                 view[i].MoveBack += View_MoveBack;
                 view[i].NewFolder += View_NewFolder;
+                view[i].Root += View_Root;
                 view[i].RootDisc += View_ListOfDiscs;
                 view[i].CopyFile += View_CopyFile;
                 view[i].PasteFile += View_PasteFile;
+                view[i].Rename += View_Rename;
+                view[i].FindFile += View_FindFile;
             }
-
-
 
             for (int i = 0; i < view.Length; i++)
                 view[i].Render();
@@ -59,7 +60,6 @@ namespace file_manager
                 DrawButtons(countLуtter + 1, 24, buttons[i]);
                 countLуtter += letter + 1;
             }
-
 
             while (true)
             {
@@ -75,18 +75,26 @@ namespace file_manager
             }
         }
 
+        private void View_FindFile(object sender, EventArgs e)
+        {
+            string text = userText.CreateText("Enter the name of the file you want to find: ");
+            //Redraw();
+        }
+
+        private void View_Root(object sender, EventArgs e)
+        {
+           string patch  = ((System.IO.DirectoryInfo)view[0].SelectedItem.State).Root.FullName;
+           view[disc].Items = GetItems(patch);
+           view[disc].CurrentState = patch;        
+        }
+
         private void View_CopyFile(object sender, EventArgs e)
         {
-             copiedFilePath = view[disc].CurrentState + "" + view[disc].SelectedItem.State;
+            copiedFilePath = view[disc].CurrentState + "" + view[disc].SelectedItem.State;
         }
 
         private void View_PasteFile(object sender, EventArgs e)
         {
-            //string SourcePath = copiedFilePath;
-            //string DestinationPath = view[disc].CurrentState + "/" + view[disc].SelectedItem.State;
-            //string SourcePath = "C:\\eqwe";
-            //string DestinationPath = "C:\\Users\\User";
-
             string SourcePath = copiedFilePath;
             string DestinationPath = view[disc].CurrentState + "\\" + view[disc].SelectedItem.State;
 
@@ -101,16 +109,32 @@ namespace file_manager
 
         private void View_NewFolder(object sender, EventArgs e)
         {
-            UserText userText = new UserText();
             string text = userText.CreateText("Create new folter: ");
             string path = view[disc].CurrentState + "/" + text;
             DirectoryInfo dirInfo = new DirectoryInfo(path);
             if (!dirInfo.Exists)
                 dirInfo.Create();
 
-            view[disc].Clean();
-            view[disc].Items = GetItems(view[disc].CurrentState.ToString());
+            Redraw();
 
+        }
+        
+        private void View_Rename(object sender, EventArgs e)
+        {
+            string newName = userText.CreateText("Create new name: ");
+            string path = ((System.IO.DirectoryInfo)view[disc].SelectedItem.State).FullName;
+            string newPath =  view[disc].CurrentState + "//";
+
+            try
+            {
+                Directory.Move(path, newPath + newName);
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.Message);
+            }
+
+            Redraw();
         }
 
         private static void View_Selected(object sender, EventArgs e)
@@ -188,6 +212,12 @@ namespace file_manager
                 return (length / 1024 / 1024).ToString() + " MB";
             else
                 return (length / 1024 / 1024 / 1024).ToString() + " GB";
+        }
+
+        public void Redraw()
+        {
+            view[disc].Clean();
+            view[disc].Items = GetItems(view[disc].CurrentState.ToString());
         }
     }
 }

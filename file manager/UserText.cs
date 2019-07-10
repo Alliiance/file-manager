@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +8,7 @@ namespace file_manager
 {
     class UserText
     {
-        int x = 45;
+        int x = 1;
         int y = 27;
 
         public string CreateText(string name)
@@ -28,6 +28,5 @@ namespace file_manager
                 Console.Write(" ");
             }
         }
-
     }
 }
