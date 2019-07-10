@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -11,10 +11,10 @@ namespace file_manager
     class DirectoryControl
     {
         private readonly ListView[] view;
-        string[] buttons = new string[] { "F1 - copy", "F2 - cut", "F3 - paste" , "F4 - root", "F5 - list of disks", "F6 - properties" , "F7 - rename" , "F8 - find" , "F9 - new folder" };
+        string[] buttons = new string[] { "F1 - copy", "F2 - cut", "F3 - paste", "F4 - root", "F5 - list of disks", "F6 - properties", "F7 - rename", "F8 - find", "F9 - new folder" };
         private int disc;
-        private int countLуtter ;
-        
+        private int countLуtter;
+        public string copiedFilePath;
 
         public DirectoryControl()
         {
@@ -23,13 +23,13 @@ namespace file_manager
 
         private static List<ListViewItem> GetItems(string path)
         {
-             return new DirectoryInfo(path).GetFileSystemInfos()
-                 .Select(f => new ListViewItem(
-                     f,
-                     f.Name,
-                     f is DirectoryInfo dir ? "<dir>" : f.Extension,
-                     f is FileInfo file ? file.Length.ToString() : ""
-                   )).ToList();
+            return new DirectoryInfo(path).GetFileSystemInfos()
+                .Select(f => new ListViewItem(
+                    f,
+                    f.Name,
+                    f is DirectoryInfo dir ? "<dir>" : f.Extension,
+                    f is FileInfo file ? FileSize(file.Length) : "folder"
+                  )).ToList();
         }
 
         internal void Start()
@@ -44,6 +44,8 @@ namespace file_manager
                 view[i].MoveBack += View_MoveBack;
                 view[i].NewFolder += View_NewFolder;
                 view[i].RootDisc += View_ListOfDiscs;
+                view[i].CopyFile += View_CopyFile;
+                view[i].PasteFile += View_PasteFile;
             }
 
 
@@ -54,10 +56,10 @@ namespace file_manager
             for (int i = 0; i < buttons.Length; i++)
             {
                 int letter = buttons[i].Length;
-                DrawButtons(countLуtter + 1, 22, buttons[i]);
+                DrawButtons(countLуtter + 1, 24, buttons[i]);
                 countLуtter += letter + 1;
             }
-              
+
 
             while (true)
             {
@@ -69,8 +71,32 @@ namespace file_manager
                     disc--;
                 else
                     view[disc].Update(key);
-                    view[disc].Render();
+                view[disc].Render();
             }
+        }
+
+        private void View_CopyFile(object sender, EventArgs e)
+        {
+             copiedFilePath = view[disc].CurrentState + "" + view[disc].SelectedItem.State;
+        }
+
+        private void View_PasteFile(object sender, EventArgs e)
+        {
+            //string SourcePath = copiedFilePath;
+            //string DestinationPath = view[disc].CurrentState + "/" + view[disc].SelectedItem.State;
+            //string SourcePath = "C:\\eqwe";
+            //string DestinationPath = "C:\\Users\\User";
+
+            string SourcePath = copiedFilePath;
+            string DestinationPath = view[disc].CurrentState + "\\" + view[disc].SelectedItem.State;
+
+            foreach (string dirPath in Directory.GetDirectories(SourcePath, "*",
+                SearchOption.AllDirectories))
+                Directory.CreateDirectory(dirPath.Replace(SourcePath, DestinationPath));
+
+            foreach (string newPath in Directory.GetFiles(SourcePath, "*.*",
+                SearchOption.AllDirectories))
+                File.Copy(newPath, newPath.Replace(SourcePath, DestinationPath), true);
         }
 
         private void View_NewFolder(object sender, EventArgs e)
@@ -150,6 +176,18 @@ namespace file_manager
             Console.BackgroundColor = ConsoleColor.DarkCyan;
             Console.Write(text);
             Console.BackgroundColor = savedBackgroundColor;
+        }
+
+        public static string FileSize(long length)
+        {
+            if (length < 10240)
+                return length.ToString() + " Byte";
+            else if (length < 1024 * 1024 * 10)
+                return (length / 1024).ToString() + " KB";
+            else if (length < (long)1024 * 1024 * 1024 * 10)
+                return (length / 1024 / 1024).ToString() + " MB";
+            else
+                return (length / 1024 / 1024 / 1024).ToString() + " GB";
         }
     }
 }

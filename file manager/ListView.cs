@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -86,11 +86,17 @@ namespace file_manager
             else if(key.Key == ConsoleKey.Backspace)
                 MoveBack(this, EventArgs.Empty);
 
-            if (key.Key == ConsoleKey.F9)
-                NewFolder(this, EventArgs.Empty);
+            if (key.Key == ConsoleKey.F1)
+                CopyFile(this, EventArgs.Empty);
+
+            if (key.Key == ConsoleKey.F3)
+                PasteFile(this, EventArgs.Empty);
 
             if (key.Key == ConsoleKey.F5)
                 RootDisc(this, EventArgs.Empty);
+
+            if (key.Key == ConsoleKey.F9)
+                NewFolder(this, EventArgs.Empty);
 
             if (selectedIndex >= height + scroll)
             {
@@ -107,6 +113,8 @@ namespace file_manager
         }
         public event EventHandler MoveBack;
         public event EventHandler Selected;
+        public event EventHandler CopyFile;
+        public event EventHandler PasteFile;
         public event EventHandler NewFolder;
         public event EventHandler RootDisc;
     }
