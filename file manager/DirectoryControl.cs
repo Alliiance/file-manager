@@ -14,7 +14,7 @@ namespace file_manager
         string[] buttons = new string[] { "F1 - copy", "F2 - cut", "F3 - paste", "F4 - root", "F5 - list of disks", "F6 - properties", "F7 - rename", "F8 - find", "F9 - new folder" };
         private int disc;
         private int countLуtter;
-        public string copiedFilePath;
+        CopyPastArgument copyPastArgument = new CopyPastArgument();
         UserText userText = new UserText();
         public DirectoryControl()
         {
@@ -47,6 +47,7 @@ namespace file_manager
                 view[i].Properties += View_Properties;
                 view[i].RootDisc += View_ListOfDiscs;
                 view[i].CopyFile += View_CopyFile;
+                view[i].CutFile += View_CutFile;
                 view[i].PasteFile += View_PasteFile;
                 view[i].Rename += View_Rename;
                 view[i].FindFile += View_FindFile;
@@ -79,7 +80,6 @@ namespace file_manager
         private void View_FindFile(object sender, EventArgs e)
         {
             string text = userText.CreateText("Enter the name of the file you want to find: ");
-            //Redraw();
         }
 
         private void View_Root(object sender, EventArgs e)
@@ -98,7 +98,8 @@ namespace file_manager
             Console.WriteLine($" Name: {((FileSystemInfo)view[disc].SelectedItem.State)}");
             Console.WriteLine($" Root directory: { view[disc].CurrentState }");
             Console.WriteLine($" Parent directory: {((FileSystemInfo)view[disc].SelectedItem.State).FullName}");
-            //  Console.WriteLine($" Is read only: {((FileInfo)view[disc].SelectedItem.State).IsReadOnly.ToString()}");
+            if (view[disc].SelectedItem.State is FileInfo file)
+                Console.WriteLine($" Is read only: {file.IsReadOnly.ToString()}");
             Console.WriteLine($" Last read time: {((FileSystemInfo)view[disc].SelectedItem.State).LastAccessTime}");
             Console.WriteLine($" Last write time: {((FileSystemInfo)view[disc].SelectedItem.State).LastWriteTime}");
 
@@ -106,14 +107,33 @@ namespace file_manager
 
         private void View_CopyFile(object sender, EventArgs e)
         {
-            copiedFilePath = view[disc].CurrentState + "" + view[disc].SelectedItem.State;
+            copyPastArgument.FilePath = view[disc].CurrentState + "\\" + view[disc].SelectedItem.State.ToString();
+            copyPastArgument.PasteState = false;
+        }
+
+        private void View_CutFile(object sender, EventArgs e)
+        {
+            copyPastArgument.FilePath = view[disc].CurrentState + "\\" + view[disc].SelectedItem.State.ToString();
+            copyPastArgument.PasteState = true;
         }
 
         private void View_PasteFile(object sender, EventArgs e)
         {
-            string sourcePath = copiedFilePath;
+            string sourcePath = copyPastArgument.FilePath;
             string destinationPath = view[disc].CurrentState.ToString();
-            InsertFile(sourcePath, destinationPath);
+            bool pasteState = copyPastArgument.PasteState;
+
+            InsertFile(sourcePath, destinationPath );
+
+            if (pasteState)
+            {
+                if (File.Exists(sourcePath))
+                    File.Delete(sourcePath);
+
+                else if (Directory.Exists(sourcePath))
+                    Directory.Delete(sourcePath,true);
+            }
+
             Redraw();
         }
 
@@ -232,9 +252,8 @@ namespace file_manager
         private void InsertFile(string sourse, string dest)
         {
             if (File.Exists(sourse))
-            {
-                File.Copy(sourse, dest);
-            }
+                File.Copy(sourse, dest + "\\" + new FileInfo(sourse).Name);
+
             else if (Directory.Exists(sourse))
             {
                 var sourceInfo = new DirectoryInfo(sourse);

@@ -89,6 +89,9 @@ namespace file_manager
             if (key.Key == ConsoleKey.F1)
                 CopyFile(this, EventArgs.Empty);
 
+            if (key.Key == ConsoleKey.F2)
+                CutFile(this, EventArgs.Empty);
+
             if (key.Key == ConsoleKey.F3)
                 PasteFile(this, EventArgs.Empty);
 
@@ -127,6 +130,7 @@ namespace file_manager
         public event EventHandler MoveBack;
         public event EventHandler Selected;
         public event EventHandler CopyFile;
+        public event EventHandler CutFile;
         public event EventHandler PasteFile;
         public event EventHandler Root;
         public event EventHandler Properties;
