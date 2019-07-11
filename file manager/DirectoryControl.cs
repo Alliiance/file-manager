@@ -84,21 +84,21 @@ namespace file_manager
 
         private void View_Root(object sender, EventArgs e)
         {
-           string patch  = ((DirectoryInfo)view[disc].SelectedItem.State).Root.FullName;
-           view[disc].Items = GetItems(patch);
-           view[disc].CurrentState = patch;        
+            string patch = ((DirectoryInfo)view[disc].SelectedItem.State).Root.FullName;
+            view[disc].Items = GetItems(patch);
+            view[disc].CurrentState = patch;
         }
 
         private void View_Properties(object sender, EventArgs e)
         {
             int y = 29;
             userText.Clear(y, 4);
-            Console.SetCursorPosition(0 , y);
+            Console.SetCursorPosition(0, y);
 
             Console.WriteLine($" Name: {((FileSystemInfo)view[disc].SelectedItem.State)}");
             Console.WriteLine($" Root directory: { view[disc].CurrentState }");
             Console.WriteLine($" Parent directory: {((FileSystemInfo)view[disc].SelectedItem.State).FullName}");
-        //  Console.WriteLine($" Is read only: {((FileInfo)view[disc].SelectedItem.State).IsReadOnly.ToString()}");
+            //  Console.WriteLine($" Is read only: {((FileInfo)view[disc].SelectedItem.State).IsReadOnly.ToString()}");
             Console.WriteLine($" Last read time: {((FileSystemInfo)view[disc].SelectedItem.State).LastAccessTime}");
             Console.WriteLine($" Last write time: {((FileSystemInfo)view[disc].SelectedItem.State).LastWriteTime}");
 
@@ -111,16 +111,10 @@ namespace file_manager
 
         private void View_PasteFile(object sender, EventArgs e)
         {
-            string SourcePath = copiedFilePath;
-            string DestinationPath = view[disc].CurrentState + "\\" + view[disc].SelectedItem.State;
-
-            foreach (string dirPath in Directory.GetDirectories(SourcePath, "*",
-                SearchOption.AllDirectories))
-                Directory.CreateDirectory(dirPath.Replace(SourcePath, DestinationPath));
-
-            foreach (string newPath in Directory.GetFiles(SourcePath, "*.*",
-                SearchOption.AllDirectories))
-                File.Copy(newPath, newPath.Replace(SourcePath, DestinationPath), true);
+            string sourcePath = copiedFilePath;
+            string destinationPath = view[disc].CurrentState.ToString();
+            InsertFile(sourcePath, destinationPath);
+            Redraw();
         }
 
         private void View_NewFolder(object sender, EventArgs e)
@@ -134,12 +128,12 @@ namespace file_manager
             Redraw();
 
         }
-        
+
         private void View_Rename(object sender, EventArgs e)
         {
             string newName = userText.CreateText("Create new name: ");
             string path = ((DirectoryInfo)view[disc].SelectedItem.State).FullName;
-            string newPath =  view[disc].CurrentState + "//";
+            string newPath = view[disc].CurrentState + "//";
 
             try
             {
@@ -149,7 +143,6 @@ namespace file_manager
             {
                 Console.Write(ex.Message);
             }
-
             Redraw();
         }
 
@@ -166,7 +159,7 @@ namespace file_manager
                     var items = GetItems(dir.FullName);
                     view.Clean();
                     view.Items = items;
- 
+
                     view.CurrentState = dir.FullName;
                 }
                 catch (Exception)
@@ -208,7 +201,7 @@ namespace file_manager
         }
 
 
-        private static void DrawButtons(int x , int y, string text)
+        private static void DrawButtons(int x, int y, string text)
         {
             Console.SetCursorPosition(x, y);
             var savedBackgroundColor = Console.BackgroundColor;
@@ -234,6 +227,28 @@ namespace file_manager
         {
             view[disc].Clean();
             view[disc].Items = GetItems(view[disc].CurrentState.ToString());
+        }
+
+        private void InsertFile(string sourse, string dest)
+        {
+            if (File.Exists(sourse))
+            {
+                File.Copy(sourse, dest);
+            }
+            else if (Directory.Exists(sourse))
+            {
+                var sourceInfo = new DirectoryInfo(sourse);
+                var destInfo = new DirectoryInfo(dest);
+
+                var dir = Directory.CreateDirectory(destInfo.FullName + "\\" + sourceInfo.Name);
+
+                foreach (var file in sourceInfo.GetFiles())
+                    File.Copy(file.FullName, dir.FullName + "\\" + file.Name);
+
+                foreach (var dirInfo in sourceInfo.GetDirectories())
+                    InsertFile(dirInfo.FullName, dir.FullName);
+
+            }
         }
     }
 }
