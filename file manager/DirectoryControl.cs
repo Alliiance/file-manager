@@ -44,6 +44,7 @@ namespace file_manager
                 view[i].MoveBack += View_MoveBack;
                 view[i].NewFolder += View_NewFolder;
                 view[i].Root += View_Root;
+                view[i].Properties += View_Properties;
                 view[i].RootDisc += View_ListOfDiscs;
                 view[i].CopyFile += View_CopyFile;
                 view[i].PasteFile += View_PasteFile;
@@ -83,9 +84,22 @@ namespace file_manager
 
         private void View_Root(object sender, EventArgs e)
         {
-           string patch  = ((System.IO.DirectoryInfo)view[0].SelectedItem.State).Root.FullName;
+           string patch  = ((DirectoryInfo)view[disc].SelectedItem.State).Root.FullName;
            view[disc].Items = GetItems(patch);
            view[disc].CurrentState = patch;        
+        }
+
+        private void View_Properties(object sender, EventArgs e)
+        {
+            int y = 29;
+            userText.Clear(y, 4);
+            Console.SetCursorPosition(0 , y);
+
+            Console.WriteLine($" Name: {((FileSystemInfo)view[disc].SelectedItem.State)}");
+            Console.WriteLine($" Root directory: { view[disc].CurrentState }");
+            Console.WriteLine($" Parent directory: {((FileSystemInfo)view[disc].SelectedItem.State).FullName}");
+            Console.WriteLine($" Last read time: {((FileSystemInfo)view[disc].SelectedItem.State).LastAccessTime}");
+            Console.WriteLine($" Last write time: {((FileSystemInfo)view[disc].SelectedItem.State).LastWriteTime}");
         }
 
         private void View_CopyFile(object sender, EventArgs e)
@@ -122,7 +136,7 @@ namespace file_manager
         private void View_Rename(object sender, EventArgs e)
         {
             string newName = userText.CreateText("Create new name: ");
-            string path = ((System.IO.DirectoryInfo)view[disc].SelectedItem.State).FullName;
+            string path = ((DirectoryInfo)view[disc].SelectedItem.State).FullName;
             string newPath =  view[disc].CurrentState + "//";
 
             try

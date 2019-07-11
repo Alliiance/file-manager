@@ -16,16 +16,19 @@ namespace file_manager
             Console.SetCursorPosition(x, y);
             Console.Write(name);      
             string text = Console.ReadLine();
-            Clear();
+            Clear(y , 1);
             return text;
         }
 
-        private void Clear()
+        public void Clear(int y , int count)
         {
-            for (int i = 0; i < Console.WindowWidth; i++)
+            for (int i = 0; i < count; i++)
             {
-                Console.SetCursorPosition(i, y);
-                Console.Write(" ");
+                for (int j = 0; j < Console.WindowWidth; j++)
+                {
+                    Console.SetCursorPosition(j, y + i);
+                    Console.Write(" ");
+                }
             }
         }
     }

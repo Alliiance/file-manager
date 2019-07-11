@@ -98,6 +98,9 @@ namespace file_manager
             if (key.Key == ConsoleKey.F5)
                 RootDisc(this, EventArgs.Empty);
 
+            if (key.Key == ConsoleKey.F6)
+                Properties(this, EventArgs.Empty);
+
             if (key.Key == ConsoleKey.F7)
                 Rename(this, EventArgs.Empty);
 
@@ -126,6 +129,7 @@ namespace file_manager
         public event EventHandler CopyFile;
         public event EventHandler PasteFile;
         public event EventHandler Root;
+        public event EventHandler Properties;
         public event EventHandler Rename;
         public event EventHandler FindFile;
         public event EventHandler NewFolder;
