@@ -98,8 +98,10 @@ namespace file_manager
             Console.WriteLine($" Name: {((FileSystemInfo)view[disc].SelectedItem.State)}");
             Console.WriteLine($" Root directory: { view[disc].CurrentState }");
             Console.WriteLine($" Parent directory: {((FileSystemInfo)view[disc].SelectedItem.State).FullName}");
+        //  Console.WriteLine($" Is read only: {((FileInfo)view[disc].SelectedItem.State).IsReadOnly.ToString()}");
             Console.WriteLine($" Last read time: {((FileSystemInfo)view[disc].SelectedItem.State).LastAccessTime}");
             Console.WriteLine($" Last write time: {((FileSystemInfo)view[disc].SelectedItem.State).LastWriteTime}");
+
         }
 
         private void View_CopyFile(object sender, EventArgs e)
