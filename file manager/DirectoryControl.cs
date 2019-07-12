@@ -93,8 +93,8 @@ namespace file_manager
         {
             int y = 29;
             string directory = ((FileSystemInfo)view[disc].SelectedItem.State).FullName;
-            // DirectoryInfo directoryInfo = new DirectoryInfo(directory); //
-            userText.Clear(y, 7);
+            //DirectoryInfo directoryInfo = new DirectoryInfo(directory); //
+            userText.Clear(y, 8);
             Console.SetCursorPosition(0, y);
 
             Console.WriteLine($" Name: {((FileSystemInfo)view[disc].SelectedItem.State)}");
@@ -110,10 +110,8 @@ namespace file_manager
             else
             {
                 Console.WriteLine($" Size: {FileSize(FileCount.CalculateFolderSize(directory))}");               
-                Console.WriteLine($" Files: { FileCount.GetSubDirectories(directory)}");
+                Console.WriteLine($" Files: Folders: { FileCount.GetSubDirectories(directory)}");
             }
-
-
         }
 
         private void View_CopyFile(object sender, EventArgs e)

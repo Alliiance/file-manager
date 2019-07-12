@@ -10,6 +10,7 @@ namespace file_manager
     class FileCount
     {
         static int countFolder;
+        static int countFiles;
         public static long CalculateFolderSize(string folder)
         {
             float folderSize = 0.0f;
@@ -48,24 +49,36 @@ namespace file_manager
 
         public static string GetSubDirectories(string patch)
         {
-            //countFolder = 0;
-            string root = patch;
-            string[] subdirectoryEntries = Directory.GetDirectories(root);
-
-            foreach (string subdirectory in subdirectoryEntries)
-                LoadSubDirs(subdirectory);
-
-            return countFolder.ToString();
+            countFolder = 0;
+            countFiles = 0;
+            string rootsss = patch;
+            int index = 0;
+            try
+            {
+                string[] subdirectoryEntries = Directory.GetDirectories(rootsss);
+                foreach (string subdirectory in subdirectoryEntries)
+                {
+                    LoadSubDirs(subdirectory);
+                    if (subdirectoryEntries.Length - 1 == index)
+                        countFiles += Directory.GetFiles(patch).Length;
+                    index++;
+                }
+                Console.WriteLine($" Files : {countFiles}");
+                return countFolder.ToString();
+            }
+            catch (Exception)
+            {
+                return "No access to folder";
+            }
         }
 
         private static void LoadSubDirs(string dir)
         {
             countFolder++;
             string[] subdirectoryEntries = Directory.GetDirectories(dir);
-
+            countFiles += Directory.GetFiles(dir).Length;
             foreach (string subdirectory in subdirectoryEntries)
                 LoadSubDirs(subdirectory);
         }
-
     }
 }
