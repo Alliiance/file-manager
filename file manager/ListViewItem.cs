@@ -10,7 +10,7 @@ namespace file_manager
     {
         private readonly string[] columns;
 
-        public object State { get;  }
+        public object State { get; set; }
 
         public ListViewItem(object state , params string[] columns)
         {

@@ -92,16 +92,27 @@ namespace file_manager
         private void View_Properties(object sender, EventArgs e)
         {
             int y = 29;
-            userText.Clear(y, 4);
+            string directory = ((FileSystemInfo)view[disc].SelectedItem.State).FullName;
+            // DirectoryInfo directoryInfo = new DirectoryInfo(directory); //
+            userText.Clear(y, 7);
             Console.SetCursorPosition(0, y);
 
             Console.WriteLine($" Name: {((FileSystemInfo)view[disc].SelectedItem.State)}");
             Console.WriteLine($" Root directory: { view[disc].CurrentState }");
-            Console.WriteLine($" Parent directory: {((FileSystemInfo)view[disc].SelectedItem.State).FullName}");
-            if (view[disc].SelectedItem.State is FileInfo file)
-                Console.WriteLine($" Is read only: {file.IsReadOnly.ToString()}");
+            Console.WriteLine($" Parent directory: {directory}");
             Console.WriteLine($" Last read time: {((FileSystemInfo)view[disc].SelectedItem.State).LastAccessTime}");
             Console.WriteLine($" Last write time: {((FileSystemInfo)view[disc].SelectedItem.State).LastWriteTime}");
+            if (view[disc].SelectedItem.State is FileInfo file)
+            {
+                Console.WriteLine($" Is read only: {file.IsReadOnly.ToString()}");
+                Console.WriteLine($" Size : { FileSize(file.Length)}");
+            }
+            else
+            {
+                Console.WriteLine($" Size: {FileSize(FileCount.CalculateFolderSize(directory))}");               
+                Console.WriteLine($" Files: { FileCount.GetSubDirectories(directory)}");
+            }
+
 
         }
 
@@ -184,7 +195,7 @@ namespace file_manager
                 }
                 catch (Exception)
                 {
-
+                    return;
                 }
             }
         }
@@ -266,7 +277,6 @@ namespace file_manager
 
                 foreach (var dirInfo in sourceInfo.GetDirectories())
                     InsertFile(dirInfo.FullName, dir.FullName);
-
             }
         }
     }

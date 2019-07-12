@@ -79,11 +79,24 @@ namespace file_manager
         {
             prevSelectedIndex = selectedIndex;
 
-            if (key.Key == ConsoleKey.DownArrow && selectedIndex + 1 < Items.Count)
-                selectedIndex++;
-            else if (key.Key == ConsoleKey.UpArrow && selectedIndex - 1 >= 0)
+            if (key.Key == ConsoleKey.UpArrow && selectedIndex > 0)
                 selectedIndex--;
-            else if(key.Key == ConsoleKey.Backspace)
+            if (key.Key == ConsoleKey.DownArrow && selectedIndex < Items.Count - 1)
+                selectedIndex++;
+            if (selectedIndex >= height + scroll)
+            {
+                scroll++;
+                wasPainted = false;
+            }
+            else if (selectedIndex < scroll)
+            {
+                scroll--;
+                wasPainted = false;
+            }
+            if (key.Key == ConsoleKey.Enter)
+                Selected(this, EventArgs.Empty);
+
+            if (key.Key == ConsoleKey.Backspace)
                 MoveBack(this, EventArgs.Empty);
 
             if (key.Key == ConsoleKey.F1)
@@ -114,18 +127,6 @@ namespace file_manager
             if (key.Key == ConsoleKey.F9)
                 NewFolder(this, EventArgs.Empty);
 
-            if (selectedIndex >= height + scroll)
-            {
-                scroll++;
-                wasPainted = false;
-            }
-            else if (selectedIndex < scroll)
-            {
-                scroll--;
-                wasPainted = false;
-            }
-            else if (key.Key == ConsoleKey.Enter)
-                Selected(this, EventArgs.Empty);
         }
         public event EventHandler MoveBack;
         public event EventHandler Selected;
