@@ -11,7 +11,7 @@ namespace file_manager
     class DirectoryControl
     {
         private readonly ListView[] view;
-        string[] buttons = new string[] { "F1 - copy", "F2 - cut", "F3 - paste", "F4 - root", "F5 - list of disks", "F6 - properties", "F7 - rename", "F8 - find", "F9 - new folder" };
+        string[] buttons = new string[] { "F1 - copy", "F2 - cut", "F3 - paste", "F4 - root", "F5 - list of disks", "F6 - properties", "F7 - rename", "F8 - delete", "F9 - new folder" };
         private int disc;
         private int countLуtter;
         CopyPastArgument copyPastArgument = new CopyPastArgument();
@@ -50,7 +50,7 @@ namespace file_manager
                 view[i].CutFile += View_CutFile;
                 view[i].PasteFile += View_PasteFile;
                 view[i].Rename += View_Rename;
-                view[i].FindFile += View_FindFile;
+                view[i].Delete += View_Delete;
             }
 
             for (int i = 0; i < view.Length; i++)
@@ -77,9 +77,17 @@ namespace file_manager
             }
         }
 
-        private void View_FindFile(object sender, EventArgs e)
+        private void View_Delete(object sender, EventArgs e)
         {
-            string text = userText.CreateText("Enter the name of the file you want to find: ");
+            string path = ((FileSystemInfo)view[disc].SelectedItem.State).FullName;
+
+            if (File.Exists(path))
+                File.Delete(path);
+
+            else if (Directory.Exists(path))
+                Directory.Delete(path, true);
+
+            Redraw();
         }
 
         private void View_Root(object sender, EventArgs e)
@@ -93,8 +101,7 @@ namespace file_manager
         {
             int y = 29;
             string directory = ((FileSystemInfo)view[disc].SelectedItem.State).FullName;
-            //DirectoryInfo directoryInfo = new DirectoryInfo(directory); //
-            userText.Clear(y, 8);
+            userText.Clear(y, 10);
             Console.SetCursorPosition(0, y);
 
             Console.WriteLine($" Name: {((FileSystemInfo)view[disc].SelectedItem.State)}");

@@ -56,7 +56,7 @@ namespace file_manager
                 var item = Items[elementIndex];
                 var savedForeground = Console.ForegroundColor;
                 var savedBackground = Console.BackgroundColor;
-                if (i == selectedIndex){
+                if (elementIndex == selectedIndex){
                     Console.ForegroundColor = ConsoleColor.Black;
                     Console.BackgroundColor = ConsoleColor.Green;
                 }
@@ -122,12 +122,13 @@ namespace file_manager
 
 
             if (key.Key == ConsoleKey.F8)
-                FindFile(this, EventArgs.Empty);
+                Delete(this, EventArgs.Empty);
 
             if (key.Key == ConsoleKey.F9)
                 NewFolder(this, EventArgs.Empty);
 
         }
+
         public event EventHandler MoveBack;
         public event EventHandler Selected;
         public event EventHandler CopyFile;
@@ -136,7 +137,7 @@ namespace file_manager
         public event EventHandler Root;
         public event EventHandler Properties;
         public event EventHandler Rename;
-        public event EventHandler FindFile;
+        public event EventHandler Delete;
         public event EventHandler NewFolder;
         public event EventHandler RootDisc; 
     }
