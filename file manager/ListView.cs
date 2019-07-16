@@ -31,7 +31,7 @@ namespace file_manager
         {
             selectedIndex = prevSelectedIndex = 0;
             wasPainted = false;
-            for (int i = 0; i < Items.Count(); i++)
+            for (int i = 0; i < Math.Min(height, Items.Count); i++)
             {
                 Console.CursorLeft = x;
                 Console.CursorTop = i + y;
@@ -96,7 +96,7 @@ namespace file_manager
             if (key.Key == ConsoleKey.Enter)
                 Selected(this, EventArgs.Empty);
 
-            if (key.Key == ConsoleKey.Backspace)
+            if (key.Key == ConsoleKey.Backspace)  
                 MoveBack(this, EventArgs.Empty);
 
             if (key.Key == ConsoleKey.F1)
